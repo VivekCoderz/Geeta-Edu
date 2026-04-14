@@ -16,6 +16,8 @@ router.post('/tutor/lesson-plan', aiController.getTutorLessonPlan);
 router.post('/tutor/teach',       aiController.tutorTeachSection);
 router.post('/tutor/followup',    aiController.tutorFollowup);
 router.post('/tutor/quiz',        aiController.tutorGenerateQuiz);
+router.post('/tutor/translate',    aiController.tutorTranslate);
+router.post('/tutor/summarize',    aiController.tutorSummarize);
 
 // ── Translation & Summary ──
 router.post('/translate',  aiController.translateContent);

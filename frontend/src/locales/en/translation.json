@@ -1,0 +1,34 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "batches": "Batches",
+    "live_classes": "Live Classes",
+    "assignments": "Assignments",
+    "materials": "Materials",
+    "community": "Community",
+    "leaderboard": "Leaderboard",
+    "announcements": "Announcements",
+    "interview_coach": "Interview Coach",
+    "ai_tutor": "AI Tutor",
+    "logout": "Logout"
+  },
+  "ui": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "submit": "Submit",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "translate": "Translate using AI"
+  },
+  "dash": {
+    "instructor_studio": "Instructor Studio",
+    "new_course": "New Course",
+    "create_batch": "Create Batch",
+    "total_revenue": "Total Revenue",
+    "active_students": "Active Students",
+    "published_courses": "Published Courses",
+    "go_live": "Go Live",
+    "active_batches": "Active Batches"
+  }
+}

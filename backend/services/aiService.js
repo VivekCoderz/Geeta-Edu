@@ -298,6 +298,7 @@ exports.generateQuiz = async (topic, sectionTitles) => {
   }
 };
 
+<<<<<<< HEAD
 // ─────────────────────────────────────────────────────────────
 // TRANSLATION
 // ─────────────────────────────────────────────────────────────
@@ -327,12 +328,23 @@ Text to translate:
 """
 ${text}
 """`;
+=======
+/**
+ * Translates content into the preferred language.
+ */
+exports.translateText = async (text, targetLanguage) => {
+  const prompt = `Translate the following text to ${targetLanguage}. Maintain the educational context and tone.
+  Text: "${text}"
+  
+  Return ONLY the translated text.`;
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
 
   const result = await generateWithFallback(prompt);
   const response = await result.response;
   return response.text().trim();
 };
 
+<<<<<<< HEAD
 // ─────────────────────────────────────────────────────────────
 // LECTURE SUMMARIES & KEY INSIGHTS
 // ─────────────────────────────────────────────────────────────
@@ -361,10 +373,28 @@ Return ONLY valid JSON (no markdown, no extra text):
   "keyInsights": ["Insight 1", "Insight 2", "Insight 3", "Insight 4", "Insight 5"],
   "takeaways": ["Key takeaway 1", "Key takeaway 2", "Key takeaway 3"]
 }`;
+=======
+/**
+ * Summarizes lecture content.
+ */
+exports.summarizeLecture = async (content, language, level) => {
+  const prompt = `You are an AI learning assistant. Summarize the following lecture content for a ${level} level student. 
+  Ensure the explanation is simple, easy to understand, and highlights key concepts.
+  Provide the summary in ${language}.
+  
+  Lecture text: "${content}"
+  
+  Return ONLY valid JSON:
+  {
+    "summary": "Full summary text here...",
+    "keyPoints": ["Point 1", "Point 2", "Point 3"]
+  }`;
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
 
   const result = await generateWithFallback(prompt);
   const response = await result.response;
   let text = response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+<<<<<<< HEAD
   
   try {
     return JSON.parse(text);
@@ -374,6 +404,14 @@ Return ONLY valid JSON (no markdown, no extra text):
       summary: `Summary for "${title}": ${description || 'This lecture covers important concepts. Watch the full video for detailed understanding.'}`,
       keyInsights: ['Watch the complete lecture for key insights'],
       takeaways: ['Review the material regularly for best results']
+=======
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    return {
+      summary: text,
+      keyPoints: []
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
     };
   }
 };

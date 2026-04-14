@@ -14,6 +14,7 @@ import BatchLearningHub from './pages/batches/BatchLearningHub';
 import AssignmentList from './pages/assignments/AssignmentList';
 import LiveSchedule from './pages/live-classes/LiveSchedule';
 import Community from './pages/community/Community';
+import Leaderboard from './pages/community/Leaderboard';
 import TestArena from './pages/tests/TestArena';
 import Profile from './pages/profile/Profile';
 import TrainerProfile from './pages/profile/TrainerProfile';
@@ -69,6 +70,7 @@ function App() {
               <Route path="materials" element={<MaterialList />} />
               <Route path="live-classes" element={<LiveSchedule />} />
               <Route path="community" element={<Community />} />
+              <Route path="leaderboard" element={<Leaderboard />} />
               <Route path="announcements" element={<AnnouncementList />} />
               <Route path="interview" element={<InterviewCoach />} />
               <Route path="ai-tutor" element={<AiTutor />} />

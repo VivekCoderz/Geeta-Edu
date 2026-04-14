@@ -69,6 +69,7 @@ const userSchema = new mongoose.Schema({
   },
   preferredLanguage: {
     type: String,
+<<<<<<< HEAD
     default: 'en',
     enum: ['en', 'hi', 'ar', 'pcm']
   },
@@ -77,6 +78,25 @@ const userSchema = new mongoose.Schema({
     default: 'beginner',
     enum: ['beginner', 'intermediate', 'advanced']
   },
+=======
+    default: 'English'
+  },
+  learningLevel: {
+    type: String,
+    enum: ['Beginner', 'Intermediate', 'Advanced'],
+    default: 'Beginner'
+  },
+  points: {
+    type: Number,
+    default: 0
+  },
+  badges: [{
+    name: String,
+    icon: String,
+    description: String,
+    earnedAt: { type: Date, default: Date.now }
+  }],
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
   createdAt: {
     type: Date,
     default: Date.now

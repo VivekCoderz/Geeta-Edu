@@ -184,12 +184,18 @@ const StudentDashboard = () => {
                     : `${enrolledCourses.length} courses active`
         },
         { 
+<<<<<<< HEAD
             title: 'Learning Streak', 
             value: `${learningStreak.days} Day${learningStreak.days !== 1 ? 's' : ''}`, 
+=======
+            title: 'Total Points', 
+            value: (user?.points || 0).toString(), 
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
             icon: Zap, 
             color: 'text-amber-400', 
             bg: 'bg-amber-500/10',
             border: 'border-amber-500/20',
+<<<<<<< HEAD
             trend: learningStreak.label
         },
         { 
@@ -204,6 +210,18 @@ const StudentDashboard = () => {
                 : pendingTaskCount === 1 
                     ? '1 task needs attention' 
                     : `${pendingTaskCount} tasks need attention`
+=======
+            trend: 'Keep earning!'
+        },
+        { 
+            title: 'Badges Earned', 
+            value: (user?.badges?.length || 0).toString(), 
+            icon: Sparkles, 
+            color: 'text-rose-400', 
+            bg: 'bg-rose-500/10',
+            border: 'border-rose-500/20',
+            trend: 'Collect them all'
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
         },
     ];
 

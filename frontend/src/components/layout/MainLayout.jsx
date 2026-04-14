@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
 import { 
@@ -17,8 +18,12 @@ import {
   GraduationCap,
   FileText,
   FolderOpen,
+<<<<<<< HEAD
   Trophy,
   Globe
+=======
+  Trophy
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useLanguage, LANGUAGES } from '../../context/LanguageContext';
@@ -41,7 +46,11 @@ const MainLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+<<<<<<< HEAD
   const { currentLang, changeLang, languages } = useLanguage();
+=======
+  const { t } = useTranslation();
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
 
   const handleLogout = () => {
     logout();
@@ -49,6 +58,7 @@ const MainLayout = () => {
   };
 
   const navItems = [
+<<<<<<< HEAD
     { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
     { icon: BookOpen, label: 'Courses', href: '/courses' },
     { icon: Users, label: 'Batches', href: '/batches' },
@@ -60,6 +70,19 @@ const MainLayout = () => {
     { icon: Bot,           label: 'Interview Coach', href: '/interview' },
     { icon: GraduationCap, label: 'AI Tutor',        href: '/ai-tutor' },
     { icon: Trophy,        label: 'Leaderboard',     href: '/leaderboard' },
+=======
+    { icon: LayoutDashboard, label: t('nav.dashboard'), href: '/' },
+    { icon: BookOpen, label: t('nav.courses'), href: '/courses' },
+    { icon: Users, label: t('nav.batches'), href: '/batches' },
+    { icon: Video, label: t('nav.live_classes'), href: '/live-classes' },
+    { icon: FileText, label: t('nav.assignments'), href: '/assignments' },
+    { icon: FolderOpen, label: t('nav.materials'), href: '/materials' },
+    { icon: MessageSquare, label: t('nav.community'), href: '/community' },
+    { icon: Trophy, label: t('nav.leaderboard'), href: '/leaderboard' },
+    { icon: Bell, label: t('nav.announcements'), href: '/announcements' },
+    { icon: Bot,           label: t('nav.interview_coach'), href: '/interview' },
+    { icon: GraduationCap, label: t('nav.ai_tutor'),        href: '/ai-tutor' },
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
   ];
 
   if (user?.role === 'admin') {
@@ -91,6 +114,7 @@ const MainLayout = () => {
               ))}
             </nav>
           </div>
+<<<<<<< HEAD
           <div className="mt-auto p-4">
              {/* Language Selector */}
              <div className="mb-3">
@@ -121,10 +145,36 @@ const MainLayout = () => {
                     <span className="text-sm font-medium">{user?.name}</span>
                     <span className="text-xs text-muted-foreground capitalize">{user?.role}</span>
                 </div>
+=======
+          <div className="mt-auto p-4 border-t space-y-3">
+             <div className="flex items-center gap-2">
+               <span className="text-xs font-semibold text-muted-foreground w-12">Lang:</span>
+               <select 
+                 className="flex-1 bg-muted/50 text-xs px-2 py-1.5 rounded-md border-slate-700 outline-none text-slate-300"
+                 value={user?.preferredLanguage || 'English'}
+                 onChange={async (e) => {
+                   const newLang = e.target.value;
+                   try {
+                     const api = (await import('../../services/api')).default;
+                     await api.put('/auth/updatedetails', { preferredLanguage: newLang });
+                     window.location.reload(); 
+                   } catch(err) { console.error(err)}
+                 }}
+               >
+                 <option value="English">English</option>
+                 <option value="Hindi">हिंदी (Hindi)</option>
+                 <option value="Bengali">বাংলা (Bengali)</option>
+               </select>
+             </div>
+             
+             <Link to="/profile" className="flex flex-col px-2 py-2 hover:bg-muted/50 transition-colors cursor-pointer rounded-lg bg-background border">
+                <span className="text-sm font-medium text-primary line-clamp-1">{user?.name}</span>
+                <span className="text-[10px] text-muted-foreground capitalize">{user?.role}</span>
+>>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
              </Link>
-             <Button variant="outline" className="w-full justify-start gap-2" onClick={handleLogout}>
+             <Button variant="outline" size="sm" className="w-full justify-start gap-2" onClick={handleLogout}>
                <LogOut className="h-4 w-4" />
-               Logout
+               {t('nav.logout')}
              </Button>
           </div>
         </div>

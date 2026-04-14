@@ -7,10 +7,11 @@ import SubmissionListModal from '../../components/dashboard/trainer/SubmissionLi
 import CreateAssignmentModal from '../../components/dashboard/trainer/CreateAssignmentModal';
 import CreateTestModal from '../../components/dashboard/trainer/CreateTestModal';
 import CreateAnnouncementModal from '../../components/dashboard/trainer/CreateAnnouncementModal';
-import { Video, Calendar, FileText, Download, Link as LinkIcon, Users, ArrowLeft, PlayCircle, X, BookOpen, Code, Trophy, Sparkles, Megaphone, Bell, Trash2 } from 'lucide-react';
+import { Video, Calendar, FileText, Download, Link as LinkIcon, Users, ArrowLeft, PlayCircle, X, BookOpen, Code, Trophy, Sparkles, Megaphone, Bell, Trash2, Bot, Loader2, ListChecks } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Plyr } from 'plyr-react';
 import 'plyr-react/plyr.css';
+import AutoTranslate from '../../components/ui/AutoTranslate';
 
 const BatchLearningHub = () => {
   const { id } = useParams();
@@ -23,6 +24,10 @@ const BatchLearningHub = () => {
   const [assignments, setAssignments] = useState([]);
   const [tests, setTests] = useState([]); 
   const [loading, setLoading] = useState(true);
+
+  // AI Summarize State
+  const [summarizing, setSummarizing] = useState(false);
+  const [aiSummary, setAiSummary] = useState(null);
 
   // UI States
   const [playingVideo, setPlayingVideo] = useState(null);
@@ -81,10 +86,29 @@ const BatchLearningHub = () => {
       const videoId = getVideoId(session.youtubeLiveUrl);
       if (videoId) {
           setPlayingVideo({ ...session, youtubeId: videoId, isLiveSession: true });
+          setAiSummary(null);
       } else {
           // Fallback: if can't extract ID, open in new tab
           window.open(session.youtubeLiveUrl, '_blank');
       }
+  };
+
+  const handleSummarize = async () => {
+        if (!playingVideo) return;
+        setSummarizing(true);
+        try {
+            const content = `Title: ${playingVideo.title}\nDescription: ${playingVideo.description || 'Watch the lecture to understand the topic.'}`;
+            const res = await api.post('/ai/tutor/summarize', {
+                content,
+                language: user?.preferredLanguage || 'English',
+                level: user?.learningLevel || 'Beginner'
+            });
+            setAiSummary(res.data.data);
+        } catch (error) {
+            console.error("Summarize error", error);
+        } finally {
+            setSummarizing(false);
+        }
   };
 
   const getVideoId = (url) => {
@@ -126,7 +150,18 @@ const BatchLearningHub = () => {
               fileUrl 
           });
 
-          alert("Assignment Submitted Successfully!");
+          // Award Gamification Points (e.g., 50 points per assignment)
+          try {
+              const pointsRes = await api.post('/gamification/award', { pointsToAdd: 50, reason: 'Completed Assignment' });
+              if (pointsRes.data?.data?.newBadges?.length > 0) {
+                  alert(`Assignment Submitted! 🎉 You earned 50 points and a new badge: ${pointsRes.data.data.newBadges[0].name}`);
+              } else {
+                  alert("Assignment Submitted! 🎉 You earned 50 points!");
+              }
+          } catch (e) {
+              alert("Assignment Submitted Successfully!");
+          }
+
           setSelectedAssignment(null);
           setSubmissionLink('');
           setSubmissionFile(null);
@@ -304,7 +339,10 @@ const BatchLearningHub = () => {
                                     return (
                                         <div 
                                             key={session._id} 
-                                            onClick={() => setPlayingVideo({ ...session, youtubeId: videoId, isLiveRecording: true })}
+                                            onClick={() => {
+                                                setPlayingVideo({ ...session, youtubeId: videoId, isLiveRecording: true });
+                                                setAiSummary(null);
+                                            }}
                                             className="group relative bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-1"
                                         >
                                             {user.role === 'trainer' && (
@@ -362,10 +400,14 @@ const BatchLearningHub = () => {
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex justify-between items-start mb-1">
-                                                <h3 className="font-bold text-lg text-white">{ann.title}</h3>
+                                                <h3 className="font-bold text-lg text-white">
+                                                    <AutoTranslate text={ann.title} />
+                                                </h3>
                                                 <span className="text-xs text-slate-500 font-mono whitespace-nowrap">{new Date(ann.createdAt).toLocaleDateString()}</span>
                                             </div>
-                                            <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{ann.message}</p>
+                                            <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                                <AutoTranslate text={ann.message} />
+                                            </p>
                                         </div>
                                     </div>
                                 ))
@@ -386,7 +428,10 @@ const BatchLearningHub = () => {
                          {batch?.videos?.map(video => (
                              <div 
                                 key={video._id} 
-                                onClick={() => setPlayingVideo({ ...video, isCourseVideo: true })}
+                                onClick={() => {
+                                    setPlayingVideo({ ...video, isCourseVideo: true });
+                                    setAiSummary(null);
+                                }}
                                 className="group relative bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300"
                             >
                                 <div className="aspect-video relative overflow-hidden">
@@ -512,12 +557,18 @@ const BatchLearningHub = () => {
 
         {/* Video Player Overlay (Theater Mode) */}
         {playingVideo && (
-            <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col animate-in fade-in duration-300">
+            <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-xl flex flex-col animate-in fade-in duration-300">
                  <div className="flex items-center justify-between p-4 border-b border-white/10">
                     <h2 className="font-bold text-lg text-white">{playingVideo.title}</h2>
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full" onClick={() => setPlayingVideo(null)}>
-                        <X className="h-6 w-6" />
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        <Button variant="outline" size="sm" onClick={handleSummarize} disabled={summarizing} className="bg-indigo-600 hover:bg-indigo-500 text-white border-0 gap-2">
+                            {summarizing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bot className="h-4 w-4" />}
+                            AI Summarize
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full" onClick={() => { setPlayingVideo(null); setAiSummary(null); }}>
+                            <X className="h-6 w-6" />
+                        </Button>
+                    </div>
                 </div>
                 <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
                      <div className="flex-1 flex items-center justify-center bg-black p-4 md:p-10 text-white">
@@ -540,27 +591,64 @@ const BatchLearningHub = () => {
                             />
                          </div>
                     </div>
-                    {/* Sidebar for Course Videos */}
-                    {playingVideo.isCourseVideo && (
-                         <div className="w-full md:w-80 border-l border-white/10 bg-slate-900 overflow-y-auto">
-                             <div className="p-4 border-b border-white/10">
-                                 <h3 className="font-bold text-white">Course Content</h3>
-                             </div>
-                             {batch?.videos?.map(video => (
-                                 <div 
-                                    key={video._id}
-                                    onClick={() => setPlayingVideo({ ...video, isCourseVideo: true })}
-                                    className={`p-4 flex gap-3 cursor-pointer hover:bg-white/5 border-b border-white/5 transition-colors ${playingVideo._id === video._id ? 'bg-indigo-600/20 border-l-4 border-l-indigo-500' : ''}`}
-                                 >
-                                     <img src={`https://img.youtube.com/vi/${video.youtubeId}/default.jpg`} className="w-24 h-16 object-cover rounded" />
-                                     <div>
-                                         <h4 className={`text-sm font-medium line-clamp-2 ${playingVideo._id === video._id ? 'text-indigo-400' : 'text-slate-300'}`}>{video.title}</h4>
-                                         <span className="text-xs text-slate-500">{video.duration}</span>
-                                     </div>
+                    
+                    {/* Sidebar for AI Summary AND Course Videos */}
+                    <div className="w-full md:w-96 border-l border-white/10 bg-slate-900 flex flex-col overflow-hidden hidden md:flex">
+                         {aiSummary ? (
+                             <div className="flex-1 overflow-y-auto p-6 scroll-smooth bg-gradient-to-b from-indigo-950/20 to-slate-900">
+                                 <div className="flex items-center gap-2 mb-4">
+                                     <Sparkles className="h-5 w-5 text-indigo-400" />
+                                     <h3 className="font-bold text-white text-lg">AI Explanation</h3>
                                  </div>
-                             ))}
-                         </div>
-                    )}
+                                 <p className="text-sm text-slate-300 leading-relaxed mb-6 whitespace-pre-wrap">{aiSummary.summary}</p>
+                                 
+                                 {aiSummary.keyPoints && aiSummary.keyPoints.length > 0 && (
+                                     <>
+                                         <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                                             <ListChecks className="h-4 w-4 text-emerald-400" /> Key Insights
+                                         </h4>
+                                         <ul className="space-y-2 mb-4">
+                                             {aiSummary.keyPoints.map((point, i) => (
+                                                 <li key={i} className="flex gap-2 text-sm text-slate-300">
+                                                     <span className="text-indigo-400 mt-1">•</span>
+                                                     <span>{point}</span>
+                                                 </li>
+                                             ))}
+                                         </ul>
+                                     </>
+                                 )}
+                             </div>
+                         ) : playingVideo.isCourseVideo ? (
+                             <>
+                                 <div className="p-4 border-b border-white/10 bg-slate-900/50">
+                                     <h3 className="font-bold text-white">Course Content</h3>
+                                 </div>
+                                 <div className="flex-1 overflow-y-auto">
+                                     {batch?.videos?.map(video => (
+                                         <div 
+                                            key={video._id}
+                                            onClick={() => {
+                                                setPlayingVideo({ ...video, isCourseVideo: true });
+                                                setAiSummary(null);
+                                            }}
+                                            className={`p-4 flex gap-3 cursor-pointer hover:bg-white/5 border-b border-white/5 transition-colors ${playingVideo._id === video._id ? 'bg-indigo-600/20 border-l-4 border-l-indigo-500' : ''}`}
+                                         >
+                                             <img src={`https://img.youtube.com/vi/${video.youtubeId}/default.jpg`} className="w-24 h-16 object-cover rounded" />
+                                             <div>
+                                                 <h4 className={`text-sm font-medium line-clamp-2 ${playingVideo._id === video._id ? 'text-indigo-400' : 'text-slate-300'}`}>{video.title}</h4>
+                                                 <span className="text-xs text-slate-500">{video.duration}</span>
+                                             </div>
+                                         </div>
+                                     ))}
+                                 </div>
+                             </>
+                         ) : (
+                             <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-slate-500">
+                                 <Bot className="h-12 w-12 opacity-20 mb-3" />
+                                 <p>Click "AI Summarize" to generate an explanation for this class.</p>
+                             </div>
+                         )}
+                    </div>
                 </div>
             </div>
         )}
