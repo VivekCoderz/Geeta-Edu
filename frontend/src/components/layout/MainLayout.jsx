@@ -90,14 +90,32 @@ const MainLayout = () => {
               ))}
             </nav>
           </div>
-          <div className="mt-auto p-4">
-             <Link to="/profile" className="flex items-center gap-4 px-2 py-4 border-t hover:bg-muted/50 transition-colors cursor-pointer rounded-lg">
-                <div className="flex flex-col">
-                    <span className="text-sm font-medium">{user?.name}</span>
-                    <span className="text-xs text-muted-foreground capitalize">{user?.role}</span>
-                </div>
+          <div className="mt-auto p-4 border-t space-y-3">
+             <div className="flex items-center gap-2">
+               <span className="text-xs font-semibold text-muted-foreground w-12">Lang:</span>
+               <select 
+                 className="flex-1 bg-muted/50 text-xs px-2 py-1.5 rounded-md border-slate-700 outline-none text-slate-300"
+                 value={user?.preferredLanguage || 'English'}
+                 onChange={async (e) => {
+                   const newLang = e.target.value;
+                   try {
+                     const api = (await import('../../services/api')).default;
+                     await api.put('/auth/updatedetails', { preferredLanguage: newLang });
+                     window.location.reload(); 
+                   } catch(err) { console.error(err)}
+                 }}
+               >
+                 <option value="English">English</option>
+                 <option value="Hindi">हिंदी (Hindi)</option>
+                 <option value="Bengali">বাংলা (Bengali)</option>
+               </select>
+             </div>
+             
+             <Link to="/profile" className="flex flex-col px-2 py-2 hover:bg-muted/50 transition-colors cursor-pointer rounded-lg bg-background border">
+                <span className="text-sm font-medium text-primary line-clamp-1">{user?.name}</span>
+                <span className="text-[10px] text-muted-foreground capitalize">{user?.role}</span>
              </Link>
-             <Button variant="outline" className="w-full justify-start gap-2" onClick={handleLogout}>
+             <Button variant="outline" size="sm" className="w-full justify-start gap-2" onClick={handleLogout}>
                <LogOut className="h-4 w-4" />
                {t('nav.logout')}
              </Button>

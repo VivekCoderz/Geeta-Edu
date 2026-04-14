@@ -20,5 +20,15 @@
     "save": "পরিবর্তন সংরক্ষণ করুন",
     "cancel": "বাতিল করুন",
     "translate": "এআই ব্যবহার করে অনুবাদ করুন"
+  },
+  "dash": {
+    "instructor_studio": "শিক্ষক স্টুডিও",
+    "new_course": "নতুন কোর্স",
+    "create_batch": "ব্যাচ তৈরি করুন",
+    "total_revenue": "মোট আয়",
+    "active_students": "সক্রিয় ছাত্র",
+    "published_courses": "প্রকাশিত কোর্স",
+    "go_live": "লাইভ যান",
+    "active_batches": "সক্রিয় ব্যাচ"
   }
 }

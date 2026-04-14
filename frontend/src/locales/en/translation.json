@@ -20,5 +20,15 @@
     "save": "Save Changes",
     "cancel": "Cancel",
     "translate": "Translate using AI"
+  },
+  "dash": {
+    "instructor_studio": "Instructor Studio",
+    "new_course": "New Course",
+    "create_batch": "Create Batch",
+    "total_revenue": "Total Revenue",
+    "active_students": "Active Students",
+    "published_courses": "Published Courses",
+    "go_live": "Go Live",
+    "active_batches": "Active Batches"
   }
 }

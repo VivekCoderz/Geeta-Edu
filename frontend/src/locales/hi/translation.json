@@ -20,5 +20,15 @@
     "save": "परिवर्तन सहेजें",
     "cancel": "रद्द करें",
     "translate": "एआई का उपयोग करके अनुवाद करें"
+  },
+  "dash": {
+    "instructor_studio": "प्रशिक्षक स्टूडियो",
+    "new_course": "नया कोर्स",
+    "create_batch": "बैच बनाएं",
+    "total_revenue": "कुल आय",
+    "active_students": "सक्रिय छात्र",
+    "published_courses": "प्रकाशित पाठ्यक्रम",
+    "go_live": "लाइव जाएं",
+    "active_batches": "सक्रिय बैच"
   }
 }
