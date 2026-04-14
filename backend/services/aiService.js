@@ -297,3 +297,83 @@ exports.generateQuiz = async (topic, sectionTitles) => {
     };
   }
 };
+
+// ─────────────────────────────────────────────────────────────
+// TRANSLATION
+// ─────────────────────────────────────────────────────────────
+
+const LANGUAGE_MAP = {
+  'en': 'English',
+  'hi': 'Hindi',
+  'ar': 'Arabic',
+  'pcm': 'Nigerian Pidgin English'
+};
+
+/**
+ * Translates text to a target language using Gemini.
+ * @param {string} text - Text to translate
+ * @param {string} targetLang - Language code (en, hi, ar, pcm)
+ * @returns {Promise<string>} Translated text
+ */
+exports.translateText = async (text, targetLang) => {
+  const langName = LANGUAGE_MAP[targetLang] || 'English';
+  
+  if (targetLang === 'en') return text; // Already English
+
+  const prompt = `Translate the following text to ${langName}. 
+Return ONLY the translated text, nothing else. Do not add explanations or notes.
+
+Text to translate:
+"""
+${text}
+"""`;
+
+  const result = await generateWithFallback(prompt);
+  const response = await result.response;
+  return response.text().trim();
+};
+
+// ─────────────────────────────────────────────────────────────
+// LECTURE SUMMARIES & KEY INSIGHTS
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Generates a structured summary and key insights for a lecture/video.
+ * @param {string} title - Lecture/video title
+ * @param {string} description - Description or transcript
+ * @param {string} targetLang - Language code for the summary
+ * @returns {Promise<object>} { summary, keyInsights[], takeaways[] }
+ */
+exports.generateSummary = async (title, description, targetLang = 'en') => {
+  const langName = LANGUAGE_MAP[targetLang] || 'English';
+  
+  const prompt = `You are an expert educational content summarizer.
+Given the following lecture/video information, generate a comprehensive summary.
+
+Title: "${title}"
+Description/Content: "${description || 'No description provided'}"
+
+Generate the response in ${langName} language.
+
+Return ONLY valid JSON (no markdown, no extra text):
+{
+  "summary": "A clear, concise 2-3 paragraph summary of the lecture content",
+  "keyInsights": ["Insight 1", "Insight 2", "Insight 3", "Insight 4", "Insight 5"],
+  "takeaways": ["Key takeaway 1", "Key takeaway 2", "Key takeaway 3"]
+}`;
+
+  const result = await generateWithFallback(prompt);
+  const response = await result.response;
+  let text = response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+  
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error('Summary Parse Error:', text);
+    return {
+      summary: `Summary for "${title}": ${description || 'This lecture covers important concepts. Watch the full video for detailed understanding.'}`,
+      keyInsights: ['Watch the complete lecture for key insights'],
+      takeaways: ['Review the material regularly for best results']
+    };
+  }
+};

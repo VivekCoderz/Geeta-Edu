@@ -17,4 +17,8 @@ router.post('/tutor/teach',       aiController.tutorTeachSection);
 router.post('/tutor/followup',    aiController.tutorFollowup);
 router.post('/tutor/quiz',        aiController.tutorGenerateQuiz);
 
+// ── Translation & Summary ──
+router.post('/translate',  aiController.translateContent);
+router.post('/summarize',  aiController.summarizeContent);
+
 module.exports = router;

@@ -22,6 +22,8 @@ import AnnouncementList from './pages/announcements/AnnouncementList';
 import InterviewCoach from './pages/ai/InterviewCoach';
 import AiTutor from './pages/ai/AiTutor';
 import MaterialList from './pages/materials/MaterialList';
+import Leaderboard from './pages/gamification/Leaderboard';
+import { LanguageProvider } from './context/LanguageContext';
 
 // Temporary protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -38,6 +40,7 @@ function App() {
     <Router>
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <AuthProvider>
+      <LanguageProvider>
         <div className="min-h-screen bg-background text-foreground font-sans antialiased">
           <Routes>
             <Route path="/login" element={<LoginPage />} />
@@ -72,6 +75,7 @@ function App() {
               <Route path="profile" element={<Profile />} />
               <Route path="trainer/:id" element={<TrainerProfile />} />
               <Route path="admin" element={<AdminDashboard />} />
+              <Route path="leaderboard" element={<Leaderboard />} />
             </Route>
             <Route path="tests/:id/start" element={
                <ProtectedRoute>
@@ -80,6 +84,7 @@ function App() {
             } />
           </Routes>
         </div>
+      </LanguageProvider>
       </AuthProvider>
       </GoogleOAuthProvider>
     </Router>

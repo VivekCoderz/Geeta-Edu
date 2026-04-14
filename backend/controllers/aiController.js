@@ -118,3 +118,45 @@ exports.tutorGenerateQuiz = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ─────────────────────────────────────────────────────────────
+// TRANSLATION ENDPOINT
+// ─────────────────────────────────────────────────────────────
+
+// @desc    Translate text to target language
+// @route   POST /api/ai/translate
+// @access  Private
+exports.translateContent = async (req, res) => {
+  try {
+    const { text, targetLang } = req.body;
+    if (!text || !targetLang) {
+      return res.status(400).json({ success: false, message: 'text and targetLang are required.' });
+    }
+    const translated = await aiService.translateText(text, targetLang);
+    res.json({ success: true, data: { translated, targetLang } });
+  } catch (error) {
+    console.error('Translation Error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────
+// LECTURE SUMMARY ENDPOINT
+// ─────────────────────────────────────────────────────────────
+
+// @desc    Generate AI summary for a lecture/video
+// @route   POST /api/ai/summarize
+// @access  Private
+exports.summarizeContent = async (req, res) => {
+  try {
+    const { title, description, targetLang } = req.body;
+    if (!title) {
+      return res.status(400).json({ success: false, message: 'title is required.' });
+    }
+    const data = await aiService.generateSummary(title, description || '', targetLang || 'en');
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Summary Error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

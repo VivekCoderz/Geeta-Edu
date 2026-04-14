@@ -16,9 +16,12 @@ import {
   Bot,
   GraduationCap,
   FileText,
-  FolderOpen
+  FolderOpen,
+  Trophy,
+  Globe
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useLanguage, LANGUAGES } from '../../context/LanguageContext';
 
 const SidebarItem = ({ icon: Icon, label, href, active }) => (
   <Link
@@ -38,6 +41,7 @@ const MainLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { currentLang, changeLang, languages } = useLanguage();
 
   const handleLogout = () => {
     logout();
@@ -55,6 +59,7 @@ const MainLayout = () => {
     { icon: Bell, label: 'Announcements', href: '/announcements' },
     { icon: Bot,           label: 'Interview Coach', href: '/interview' },
     { icon: GraduationCap, label: 'AI Tutor',        href: '/ai-tutor' },
+    { icon: Trophy,        label: 'Leaderboard',     href: '/leaderboard' },
   ];
 
   if (user?.role === 'admin') {
@@ -87,6 +92,30 @@ const MainLayout = () => {
             </nav>
           </div>
           <div className="mt-auto p-4">
+             {/* Language Selector */}
+             <div className="mb-3">
+               <div className="flex items-center gap-2 px-2 mb-1.5">
+                 <Globe className="h-3.5 w-3.5 text-slate-400" />
+                 <span className="text-xs text-slate-400 font-medium">Language</span>
+               </div>
+               <div className="flex gap-1 px-1">
+                 {languages.map(lang => (
+                   <button
+                     key={lang.code}
+                     onClick={() => changeLang(lang.code)}
+                     className={cn(
+                       "flex-1 px-1.5 py-1.5 rounded-lg text-xs font-medium transition-all text-center",
+                       currentLang === lang.code
+                         ? "bg-primary/20 text-primary border border-primary/30"
+                         : "text-muted-foreground hover:bg-muted/50 border border-transparent"
+                     )}
+                     title={lang.label}
+                   >
+                     {lang.flag}
+                   </button>
+                 ))}
+               </div>
+             </div>
              <Link to="/profile" className="flex items-center gap-4 px-2 py-4 border-t hover:bg-muted/50 transition-colors cursor-pointer rounded-lg">
                 <div className="flex flex-col">
                     <span className="text-sm font-medium">{user?.name}</span>

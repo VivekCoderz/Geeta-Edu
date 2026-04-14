@@ -34,6 +34,7 @@ app.use('/api/tests', require('./routes/tests'));
 app.use('/api/payment', require('./routes/payment')); // Use 'payment.js' and singular '/api/payment' path
 app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/admin', require('./routes/admin')); // Register Admin Routes
+app.use('/api/gamification', require('./routes/gamification')); // Gamification Routes
 app.use('/api', require('./routes/learningRoutes'));
 app.use('/api/chat', require('./routes/chat')); // Register Chat Routes
 

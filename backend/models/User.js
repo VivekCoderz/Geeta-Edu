@@ -67,11 +67,22 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  preferredLanguage: {
+    type: String,
+    default: 'en',
+    enum: ['en', 'hi', 'ar', 'pcm']
+  },
+  learningLevel: {
+    type: String,
+    default: 'beginner',
+    enum: ['beginner', 'intermediate', 'advanced']
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
+
 
 // Encrypt password before saving
 // Encrypt password before saving

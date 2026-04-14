@@ -2,6 +2,7 @@ const Batch = require('../models/Batch');
 const BatchEnrollment = require('../models/BatchEnrollment');
 const Course = require('../models/Course');
 const User = require('../models/User');
+const { awardPoints } = require('./gamificationController');
 // Ensure these models are registered for populating
 require('../models/Announcement');
 require('../models/LiveSession');
@@ -271,6 +272,9 @@ exports.enrollInBatch = async (req, res) => {
     batch.enrolledStudents.push(req.user.id);
     await batch.updateEnrollmentCount();
     
+    // Award gamification points for enrollment
+    awardPoints(req.user.id, 'enrollment', 50, `Enrolled in batch: ${batch.name}`, batch._id, 'Batch');
+
     res.status(201).json({
       success: true,
       data: batchEnrollment

@@ -2,6 +2,7 @@ const Test = require('../models/Test');
 const TestSubmission = require('../models/TestSubmission');
 const Batch = require('../models/Batch');
 const axios = require('axios');
+const { awardPoints } = require('./gamificationController');
 
 // Judge0 CE language IDs
 const JUDGE0_LANG_IDS = {
@@ -273,6 +274,15 @@ exports.submitTest = async (req, res) => {
             data: submission 
         });
 
+        // Award gamification points based on score
+        const maxPossible = test.questions.reduce((s, q) => s + q.points, 0);
+        const pct = maxPossible > 0 ? (totalScore / maxPossible) : 0;
+        const pts = Math.max(20, Math.round(pct * 50));
+        awardPoints(req.user.id, 'test_complete', pts, `Test: ${test.title} (Score: ${totalScore})`, test._id, 'Test');
+        if (pct === 1) {
+          awardPoints(req.user.id, 'quiz_perfect', 25, `Perfect score on: ${test.title}`, test._id, 'Test');
+        }
+
     } catch (error) {
         console.error("Submit Test Error:", error);
         res.status(500).json({ success: false, message: error.message });
@@ -312,6 +322,15 @@ exports.submitEvaluated = async (req, res) => {
             message: 'Test submitted successfully', 
             data: submission 
         });
+
+        // Award gamification points
+        const maxPossible = test.questions.reduce((s, q) => s + (q.points || 10), 0);
+        const pct = maxPossible > 0 ? (totalScore / maxPossible) : 0;
+        const pts = Math.max(20, Math.round(pct * 50));
+        awardPoints(req.user.id, 'test_complete', pts, `Test: ${test.title}`, test._id, 'Test');
+        if (pct === 1) {
+          awardPoints(req.user.id, 'quiz_perfect', 25, `Perfect score on: ${test.title}`, test._id, 'Test');
+        }
 
     } catch (error) {
         console.error("Submit Evaluated Error:", error);

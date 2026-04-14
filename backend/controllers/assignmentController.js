@@ -1,6 +1,7 @@
 const Assignment = require('../models/Assignment');
 const Batch = require('../models/Batch');
 const AssignmentSubmission = require('../models/AssignmentSubmission');
+const { awardPoints } = require('./gamificationController');
 
 // @desc    Create a new assignment
 // @route   POST /api/assignments
@@ -102,6 +103,11 @@ exports.submitAssignment = async (req, res) => {
         data: submission,
         message: 'Assignment submitted successfully' 
     });
+
+    // Award gamification points for submission (only for new, not resubmit)
+    if (!req.body._isResubmit) {
+      awardPoints(req.user.id, 'assignment_submit', 30, `Assignment: ${assignment.title}`, assignment._id, 'Assignment');
+    }
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
