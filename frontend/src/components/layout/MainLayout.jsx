@@ -16,7 +16,8 @@ import {
   Bot,
   GraduationCap,
   FileText,
-  FolderOpen
+  FolderOpen,
+  Trophy
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -52,6 +53,7 @@ const MainLayout = () => {
     { icon: FileText, label: 'Assignments', href: '/assignments' },
     { icon: FolderOpen, label: 'Materials', href: '/materials' },
     { icon: MessageSquare, label: 'Community', href: '/community' },
+    { icon: Trophy, label: 'Leaderboard', href: '/leaderboard' },
     { icon: Bell, label: 'Announcements', href: '/announcements' },
     { icon: Bot,           label: 'Interview Coach', href: '/interview' },
     { icon: GraduationCap, label: 'AI Tutor',        href: '/ai-tutor' },

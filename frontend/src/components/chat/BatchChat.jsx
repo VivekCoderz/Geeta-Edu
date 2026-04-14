@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Send, MessageSquare, Video, Paperclip, X } from 'lucide-react';
+import { Send, MessageSquare, Video, Paperclip, X, Languages, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 
@@ -17,7 +17,35 @@ const BatchChat = ({ roomId, title }) => {
     const [viewImage, setViewImage] = useState(null); // For Lightbox
     const [attachment, setAttachment] = useState(null); // { url, type, name }
     const [uploading, setUploading] = useState(false);
+    const [translatingIndex, setTranslatingIndex] = useState(null);
     const scrollRef = useRef(null);
+
+    const translateMessage = async (msgIndex, text) => {
+        if (!user.preferredLanguage) {
+            alert('Please set your preferred language in your profile to use translation.');
+            return;
+        }
+        setTranslatingIndex(msgIndex);
+        try {
+            const res = await api.post('/ai/tutor/translate', {
+                text,
+                targetLanguage: user.preferredLanguage
+            });
+            
+            const translatedText = res.data.data.translatedText;
+            
+            const updatedList = [...messageList];
+            updatedList[msgIndex] = {
+                ...updatedList[msgIndex],
+                translatedMessage: translatedText
+            };
+            setMessageList(updatedList);
+        } catch (err) {
+            console.error("Translation Failed", err);
+        } finally {
+            setTranslatingIndex(null);
+        }
+    };
 
     const handleFileSelect = async (e) => {
         const file = e.target.files[0];
@@ -203,7 +231,24 @@ const BatchChat = ({ roomId, title }) => {
                                     )}
 
                                     <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.message}</p>
+                                    {msg.translatedMessage && (
+                                        <div className="mt-2 pt-2 border-t border-white/10 text-sm leading-relaxed text-indigo-200">
+                                            <span className="text-xs font-semibold opacity-70 block mb-1">Translated ({user.preferredLanguage}):</span>
+                                            {msg.translatedMessage}
+                                        </div>
+                                    )}
                                 </div>
+                                
+                                {!isMe && (
+                                    <button 
+                                        onClick={() => translateMessage(index, msg.message)}
+                                        disabled={translatingIndex === index}
+                                        className="mb-1 ml-2 text-slate-500 hover:text-indigo-400 transition-colors"
+                                        title="Translate"
+                                    >
+                                        {translatingIndex === index ? <Loader2 className="h-4 w-4 animate-spin" /> : <Languages className="h-4 w-4" />}
+                                    </button>
+                                )}
                             </div>
                             <span className="text-[10px] text-slate-500 mt-1 px-12 font-mono opacity-70">
                                 {msg.time}

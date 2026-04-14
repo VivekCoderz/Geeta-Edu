@@ -297,3 +297,46 @@ exports.generateQuiz = async (topic, sectionTitles) => {
     };
   }
 };
+
+/**
+ * Translates content into the preferred language.
+ */
+exports.translateText = async (text, targetLanguage) => {
+  const prompt = `Translate the following text to ${targetLanguage}. Maintain the educational context and tone.
+  Text: "${text}"
+  
+  Return ONLY the translated text.`;
+
+  const result = await generateWithFallback(prompt);
+  const response = await result.response;
+  return response.text().trim();
+};
+
+/**
+ * Summarizes lecture content.
+ */
+exports.summarizeLecture = async (content, language, level) => {
+  const prompt = `You are an AI learning assistant. Summarize the following lecture content for a ${level} level student. 
+  Ensure the explanation is simple, easy to understand, and highlights key concepts.
+  Provide the summary in ${language}.
+  
+  Lecture text: "${content}"
+  
+  Return ONLY valid JSON:
+  {
+    "summary": "Full summary text here...",
+    "keyPoints": ["Point 1", "Point 2", "Point 3"]
+  }`;
+
+  const result = await generateWithFallback(prompt);
+  const response = await result.response;
+  let text = response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    return {
+      summary: text,
+      keyPoints: []
+    };
+  }
+};

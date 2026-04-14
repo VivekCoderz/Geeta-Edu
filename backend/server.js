@@ -36,6 +36,7 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/admin', require('./routes/admin')); // Register Admin Routes
 app.use('/api', require('./routes/learningRoutes'));
 app.use('/api/chat', require('./routes/chat')); // Register Chat Routes
+app.use('/api/gamification', require('./routes/gamificationRoutes')); // Register Gamification Routes
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Server is running!' });

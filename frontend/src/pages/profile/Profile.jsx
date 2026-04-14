@@ -24,7 +24,9 @@ const Profile = () => {
       github: '',
       linkedin: '',
       website: '',
-      skills: ''
+      skills: '',
+      preferredLanguage: '',
+      learningLevel: ''
   });
 
   useEffect(() => {
@@ -45,7 +47,9 @@ const Profile = () => {
             github: p.socialLinks?.github || '',
             linkedin: p.socialLinks?.linkedin || '',
             website: p.socialLinks?.website || '',
-            skills: p.skills ? p.skills.join(', ') : ''
+            skills: p.skills ? p.skills.join(', ') : '',
+            preferredLanguage: p.preferredLanguage || 'English',
+            learningLevel: p.learningLevel || 'Beginner'
         });
     } catch (error) {
         console.error('Failed to fetch profile', error);
@@ -306,6 +310,24 @@ const Profile = () => {
                                      <label className="text-sm font-semibold text-foreground">Professional Headline</label>
                                      <Input name="headline" value={formData.headline} onChange={handleInputChange} placeholder="Software Engineer | Student" />
                                  </div>
+                                 <div className="grid gap-2">
+                                     <label className="text-sm font-semibold text-foreground">Preferred Language</label>
+                                     <select name="preferredLanguage" value={formData.preferredLanguage} onChange={handleInputChange} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                         <option value="English">English</option>
+                                         <option value="Hindi">Hindi</option>
+                                         <option value="Spanish">Spanish</option>
+                                         <option value="French">French</option>
+                                         <option value="German">German</option>
+                                     </select>
+                                 </div>
+                                 <div className="grid gap-2">
+                                     <label className="text-sm font-semibold text-foreground">Learning Level</label>
+                                     <select name="learningLevel" value={formData.learningLevel} onChange={handleInputChange} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                         <option value="Beginner">Beginner</option>
+                                         <option value="Intermediate">Intermediate</option>
+                                         <option value="Advanced">Advanced</option>
+                                     </select>
+                                 </div>
                              </div>
                          </CardContent>
                      </Card>
@@ -314,7 +336,12 @@ const Profile = () => {
                 <Card className="shadow-sm border-muted/60">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-xl">About Me</CardTitle>
-                        {!isEditing && !profile?.bio && <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)} className="text-primary h-8">Add Bio</Button>}
+                        {!isEditing && (
+                            <div className="flex gap-2">
+                                <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">{profile?.preferredLanguage}</span>
+                                <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded-full">{profile?.learningLevel}</span>
+                            </div>
+                        )}
                     </CardHeader>
                     <CardContent>
                         {isEditing ? (

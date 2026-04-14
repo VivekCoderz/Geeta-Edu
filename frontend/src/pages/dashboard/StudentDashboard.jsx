@@ -50,22 +50,22 @@ const StudentDashboard = () => {
             trend: '+2 this month'
         },
         { 
-            title: 'Learning Streak', 
-            value: '3 Days', 
+            title: 'Total Points', 
+            value: (user?.points || 0).toString(), 
             icon: Zap, 
             color: 'text-amber-400', 
             bg: 'bg-amber-500/10',
             border: 'border-amber-500/20',
-            trend: 'Keep it up!'
+            trend: 'Keep earning!'
         },
         { 
-            title: 'Pending Tasks', 
-            value: '0', 
-            icon: Calendar, 
+            title: 'Badges Earned', 
+            value: (user?.badges?.length || 0).toString(), 
+            icon: Sparkles, 
             color: 'text-rose-400', 
             bg: 'bg-rose-500/10',
             border: 'border-rose-500/20',
-            trend: 'All caught up'
+            trend: 'Collect them all'
         },
     ];
 
