@@ -68,7 +68,7 @@ const LoginPage = () => {
         {/* Bottom branding overlay */}
         <div className="absolute bottom-0 left-0 right-0 z-20 p-8 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent pointer-events-none">
           <h1 className="text-4xl font-bold tracking-tight text-white mb-2">
-            Code For Mode
+            Geeta Edu
           </h1>
           <p className="text-zinc-400 text-sm max-w-md">
             Master new skills with live classes, expert mentors, and hands-on coding projects.

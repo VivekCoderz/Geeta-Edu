@@ -105,7 +105,7 @@ const CourseDetails = () => {
               key: import.meta.env.VITE_RAZORPAY_KEY_ID, 
               amount: order.amount,
               currency: order.currency,
-              name: "Code For Mode EdTech",
+              name: "Geeta Edu",
               description: `Enrollment for ${course.title}${selectedBatch ? ` - ${selectedBatch.name}` : ''}`,
               order_id: order.id,
               handler: async function (response) {
