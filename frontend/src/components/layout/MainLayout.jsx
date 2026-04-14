@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
 import { 
@@ -39,6 +40,7 @@ const MainLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logout();
@@ -46,17 +48,17 @@ const MainLayout = () => {
   };
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
-    { icon: BookOpen, label: 'Courses', href: '/courses' },
-    { icon: Users, label: 'Batches', href: '/batches' },
-    { icon: Video, label: 'Live Classes', href: '/live-classes' },
-    { icon: FileText, label: 'Assignments', href: '/assignments' },
-    { icon: FolderOpen, label: 'Materials', href: '/materials' },
-    { icon: MessageSquare, label: 'Community', href: '/community' },
-    { icon: Trophy, label: 'Leaderboard', href: '/leaderboard' },
-    { icon: Bell, label: 'Announcements', href: '/announcements' },
-    { icon: Bot,           label: 'Interview Coach', href: '/interview' },
-    { icon: GraduationCap, label: 'AI Tutor',        href: '/ai-tutor' },
+    { icon: LayoutDashboard, label: t('nav.dashboard'), href: '/' },
+    { icon: BookOpen, label: t('nav.courses'), href: '/courses' },
+    { icon: Users, label: t('nav.batches'), href: '/batches' },
+    { icon: Video, label: t('nav.live_classes'), href: '/live-classes' },
+    { icon: FileText, label: t('nav.assignments'), href: '/assignments' },
+    { icon: FolderOpen, label: t('nav.materials'), href: '/materials' },
+    { icon: MessageSquare, label: t('nav.community'), href: '/community' },
+    { icon: Trophy, label: t('nav.leaderboard'), href: '/leaderboard' },
+    { icon: Bell, label: t('nav.announcements'), href: '/announcements' },
+    { icon: Bot,           label: t('nav.interview_coach'), href: '/interview' },
+    { icon: GraduationCap, label: t('nav.ai_tutor'),        href: '/ai-tutor' },
   ];
 
   if (user?.role === 'admin') {
@@ -97,7 +99,7 @@ const MainLayout = () => {
              </Link>
              <Button variant="outline" className="w-full justify-start gap-2" onClick={handleLogout}>
                <LogOut className="h-4 w-4" />
-               Logout
+               {t('nav.logout')}
              </Button>
           </div>
         </div>

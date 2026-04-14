@@ -7,6 +7,16 @@ import { Textarea } from '../../components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Edit, Upload, FileText, Github, Linkedin, Globe, MapPin, Phone, Briefcase, Mail } from 'lucide-react';
+import i18n from '../../i18n';
+
+const languageMap = {
+    'English': 'en',
+    'Hindi': 'hi',
+    'Bengali': 'bn',
+    'Spanish': 'es',
+    'French': 'fr',
+    'German': 'de'
+};
 
 const Profile = () => {
   const { user } = useAuth();
@@ -77,7 +87,9 @@ const Profile = () => {
           const res = await api.put('/auth/updatedetails', payload);
           setProfile(res.data.data); // Update profile directly from response
           setIsEditing(false);
-          // fetchProfile(); // No need to refetch if we trust the response
+          if (res.data.data.preferredLanguage && languageMap[res.data.data.preferredLanguage]) {
+              i18n.changeLanguage(languageMap[res.data.data.preferredLanguage]);
+          }
       } catch (error) {
           console.error('Failed to update', error);
           alert('Failed to update profile');

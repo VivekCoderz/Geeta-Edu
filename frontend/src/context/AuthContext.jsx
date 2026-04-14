@@ -1,5 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
+import i18n from '../i18n';
+
+const languageMap = {
+    'English': 'en',
+    'Hindi': 'hi',
+    'Bengali': 'bn',
+    'Spanish': 'es',
+    'French': 'fr',
+    'German': 'de'
+};
 
 const AuthContext = createContext();
 
@@ -15,7 +25,11 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem('user');
     
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      if (parsedUser.preferredLanguage && languageMap[parsedUser.preferredLanguage]) {
+          i18n.changeLanguage(languageMap[parsedUser.preferredLanguage]);
+      }
     }
     setLoading(false);
   }, []);
@@ -46,11 +60,15 @@ export const AuthProvider = ({ children }) => {
     
     // Actually, let's just decode for now or fetch.
     // To be robust:
-    const userRes = await api.get('/auth/me'); // Assuming this endpoint exists based on routes/auth.js boilerplate
-    setUser(userRes.data.data);
-    localStorage.setItem('user', JSON.stringify(userRes.data.data));
+    const userRes = await api.get('/auth/me'); 
+    const userData = userRes.data.data;
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+    if (userData.preferredLanguage && languageMap[userData.preferredLanguage]) {
+        i18n.changeLanguage(languageMap[userData.preferredLanguage]);
+    }
     
-    return userRes.data.data;
+    return userData;
   };
 
   const register = async (userData) => {
@@ -58,9 +76,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', res.data.data.token);
     
     const userRes = await api.get('/auth/me');
-    setUser(userRes.data.data);
-    localStorage.setItem('user', JSON.stringify(userRes.data.data));
-    return userRes.data.data;
+    const newUserData = userRes.data.data;
+    setUser(newUserData);
+    localStorage.setItem('user', JSON.stringify(newUserData));
+    if (newUserData.preferredLanguage && languageMap[newUserData.preferredLanguage]) {
+        i18n.changeLanguage(languageMap[newUserData.preferredLanguage]);
+    }
+    return newUserData;
   };
 
   const googleLogin = async (token, role) => {
@@ -69,9 +91,13 @@ export const AuthProvider = ({ children }) => {
     
     // Backend returns user data directly, but consistent verification is good
     const userRes = await api.get('/auth/me');
-    setUser(userRes.data.data);
-    localStorage.setItem('user', JSON.stringify(userRes.data.data));
-    return userRes.data.data;
+    const userData = userRes.data.data;
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+    if (userData.preferredLanguage && languageMap[userData.preferredLanguage]) {
+        i18n.changeLanguage(languageMap[userData.preferredLanguage]);
+    }
+    return userData;
   };
 
   const logout = () => {

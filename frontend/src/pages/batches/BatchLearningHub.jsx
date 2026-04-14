@@ -11,6 +11,7 @@ import { Video, Calendar, FileText, Download, Link as LinkIcon, Users, ArrowLeft
 import { useAuth } from '../../context/AuthContext';
 import { Plyr } from 'plyr-react';
 import 'plyr-react/plyr.css';
+import AutoTranslate from '../../components/ui/AutoTranslate';
 
 const BatchLearningHub = () => {
   const { id } = useParams();
@@ -399,10 +400,14 @@ const BatchLearningHub = () => {
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex justify-between items-start mb-1">
-                                                <h3 className="font-bold text-lg text-white">{ann.title}</h3>
+                                                <h3 className="font-bold text-lg text-white">
+                                                    <AutoTranslate text={ann.title} />
+                                                </h3>
                                                 <span className="text-xs text-slate-500 font-mono whitespace-nowrap">{new Date(ann.createdAt).toLocaleDateString()}</span>
                                             </div>
-                                            <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{ann.message}</p>
+                                            <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                                <AutoTranslate text={ann.message} />
+                                            </p>
                                         </div>
                                     </div>
                                 ))

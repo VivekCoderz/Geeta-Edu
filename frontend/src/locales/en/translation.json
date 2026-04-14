@@ -1,0 +1,24 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "batches": "Batches",
+    "live_classes": "Live Classes",
+    "assignments": "Assignments",
+    "materials": "Materials",
+    "community": "Community",
+    "leaderboard": "Leaderboard",
+    "announcements": "Announcements",
+    "interview_coach": "Interview Coach",
+    "ai_tutor": "AI Tutor",
+    "logout": "Logout"
+  },
+  "ui": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "submit": "Submit",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "translate": "Translate using AI"
+  }
+}

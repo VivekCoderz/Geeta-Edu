@@ -1,0 +1,24 @@
+{
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "courses": "पाठ्यक्रम",
+    "batches": "बैच",
+    "live_classes": "लाइव क्लासेस",
+    "assignments": "असाइनमेंट",
+    "materials": "सामग्री",
+    "community": "समुदाय",
+    "leaderboard": "लीडरबोर्ड",
+    "announcements": "घोषणाएं",
+    "interview_coach": "साक्षात्कार कोच",
+    "ai_tutor": "एआई ट्यूटर",
+    "logout": "लॉग आउट"
+  },
+  "ui": {
+    "loading": "लोड हो रहा है...",
+    "error": "एक त्रुटि हुई",
+    "submit": "प्रस्तुत करें",
+    "save": "परिवर्तन सहेजें",
+    "cancel": "रद्द करें",
+    "translate": "एआई का उपयोग करके अनुवाद करें"
+  }
+}
