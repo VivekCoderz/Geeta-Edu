@@ -9,20 +9,20 @@ import { Loader2, Play, CheckCircle, XCircle, ChevronLeft, ChevronRight, Timer, 
 const TestArena = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    
+
     const [test, setTest] = useState(null);
     const [loading, setLoading] = useState(true);
     const [submissionResult, setSubmissionResult] = useState(null);
-    
+
     // Test State
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState({});
     const [activeLanguage, setActiveLanguage] = useState('javascript');
-    
+
     // Timer State
     const [timeLeft, setTimeLeft] = useState(0);
     const timerRef = useRef(null);
-    
+
     // Execution & Test Case State
     const [isRunning, setIsRunning] = useState(false);
     const [testCaseResults, setTestCaseResults] = useState({}); // { questionId: [{ passed, input, output, expected }] }
@@ -35,15 +35,15 @@ const TestArena = () => {
             try {
                 const res = await api.get(`/tests/${id}`);
                 setTest(res.data.data);
-                
+
                 const durationMins = res.data.data.duration || 60;
                 setTimeLeft(durationMins * 60);
-                
+
                 const initialAnswers = {};
                 res.data.data.questions.forEach(q => {
                     initialAnswers[q._id] = {
                         code: '// Write your code here\n',
-                        language: 'javascript' 
+                        language: 'javascript'
                     };
                 });
                 setAnswers(initialAnswers);
@@ -67,11 +67,11 @@ const TestArena = () => {
             }
             return;
         }
-        
+
         timerRef.current = setInterval(() => {
             setTimeLeft(prev => prev - 1);
         }, 1000);
-        
+
         return () => clearInterval(timerRef.current);
     }, [timeLeft, test]);
 
@@ -134,7 +134,7 @@ const TestArena = () => {
                 `;
 
                 const fn = new Function('__sc__', '__inp__', wrappedCode);
-                
+
                 let finished = false;
                 const timer = setTimeout(() => {
                     if (!finished) { finished = true; resolve({ output: '', error: 'Execution timed out (5s). Check for infinite loops.' }); }
@@ -156,7 +156,7 @@ const TestArena = () => {
         if (!currentQuestion) return;
         setIsRunning(true);
         setAllPassed(false);
-        
+
         const currentAnswer = answers[currentQuestion._id];
         const results = [];
         let passed = 0;
@@ -239,7 +239,7 @@ const TestArena = () => {
     const handleFinalSubmit = async (forced = false) => {
         if (!forced && !window.confirm("Are you sure you want to submit the test?")) return;
         setIsSubmitting(true);
-        
+
         try {
             // Evaluate any un-evaluated questions
             let finalTotalScore = 0;
@@ -283,7 +283,7 @@ const TestArena = () => {
 
             setSubmissionResult(res.data.data);
             clearInterval(timerRef.current);
-            
+
         } catch (error) {
             console.error(error);
             alert("Submission failed: " + (error.response?.data?.message || error.message));
@@ -303,7 +303,7 @@ const TestArena = () => {
     if (submissionResult) {
         const maxPossible = test.questions.reduce((sum, q) => sum + q.points, 0);
         const pct = maxPossible > 0 ? Math.round((submissionResult.totalScore / maxPossible) * 100) : 0;
-        
+
         return (
             <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-8">
                 <div className="max-w-2xl w-full space-y-8">
@@ -316,7 +316,7 @@ const TestArena = () => {
                             {pct >= 70 ? 'Great job! 🎉' : pct >= 40 ? 'Good effort! Keep practicing. 💪' : 'Don\'t give up! Review and try again. 📚'}
                         </p>
                     </div>
-                    
+
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center">
                         <span className="text-sm text-slate-500 uppercase tracking-wider font-bold">Total Score</span>
                         <div className={`text-6xl font-extrabold mt-2 ${pct >= 70 ? 'text-emerald-400' : pct >= 40 ? 'text-amber-400' : 'text-red-400'}`}>
@@ -327,7 +327,7 @@ const TestArena = () => {
                             <div className={`h-full rounded-full transition-all duration-1000 ${pct >= 70 ? 'bg-emerald-500' : pct >= 40 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${pct}%` }} />
                         </div>
                     </div>
-                    
+
                     <div className="space-y-3">
                         {submissionResult.sectionSubmissions?.map((section, idx) => (
                             <div key={idx} className="flex justify-between items-center p-4 bg-slate-900 border border-slate-800 rounded-xl">
@@ -350,10 +350,10 @@ const TestArena = () => {
                             </div>
                         ))}
                     </div>
-                    
+
                     <div className="text-center">
-                        <Button onClick={() => navigate(-1)} className="bg-indigo-600 hover:bg-indigo-500 px-8">
-                            ← Back to Classroom
+                        <Button onClick={() => navigate('/')} className="bg-indigo-600 hover:bg-indigo-500 px-8">
+                            ← Back to Dashboard
                         </Button>
                     </div>
                 </div>
@@ -374,7 +374,7 @@ const TestArena = () => {
                         Q {currentQuestionIndex + 1}/{test.questions.length}
                     </span>
                 </div>
-                
+
                 <div className="flex items-center gap-3">
                     {/* Running Score */}
                     <div className="flex items-center gap-2 text-sm font-mono bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-lg border border-emerald-500/20">
@@ -383,15 +383,14 @@ const TestArena = () => {
                         <span className="text-emerald-600">({solvedCount}/{test.questions.length})</span>
                     </div>
 
-                    <div className={`flex items-center gap-2 text-sm font-mono px-3 py-1 rounded-lg ${
-                        isTimeLow ? 'bg-red-500/10 text-red-400 animate-pulse border border-red-500/30' : 'bg-slate-800 text-white'
-                    }`}>
+                    <div className={`flex items-center gap-2 text-sm font-mono px-3 py-1 rounded-lg ${isTimeLow ? 'bg-red-500/10 text-red-400 animate-pulse border border-red-500/30' : 'bg-slate-800 text-white'
+                        }`}>
                         <Timer className="h-4 w-4" />
                         <span>{formatTime(timeLeft)}</span>
                     </div>
 
-                    <Button 
-                        variant="destructive" 
+                    <Button
+                        variant="destructive"
                         size="sm"
                         onClick={() => handleFinalSubmit(false)}
                         disabled={isSubmitting}
@@ -433,7 +432,7 @@ const TestArena = () => {
                 <div className="w-[65%] flex flex-col">
                     {/* Toolbar */}
                     <div className="h-11 border-b border-slate-800 flex items-center justify-between px-4 bg-slate-900/50">
-                        <select 
+                        <select
                             className="bg-slate-800 text-sm border border-slate-700 rounded px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             value={activeLanguage}
                             onChange={handleLanguageChange}
@@ -443,11 +442,11 @@ const TestArena = () => {
                             <option value="java">Java 15</option>
                             <option value="cpp">C++ (GCC)</option>
                         </select>
-                        
-                        <Button 
-                            size="sm" 
-                            onClick={runCode} 
-                            disabled={isRunning} 
+
+                        <Button
+                            size="sm"
+                            onClick={runCode}
+                            disabled={isRunning}
                             className="gap-2 bg-indigo-600 hover:bg-indigo-500"
                         >
                             {isRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
@@ -457,11 +456,11 @@ const TestArena = () => {
 
                     {/* Editor */}
                     <div className="flex-1 min-h-0">
-                         <CodeEditor 
+                        <CodeEditor
                             language={activeLanguage}
                             value={answers[currentQuestion._id]?.code || ''}
                             onChange={handleCodeChange}
-                         />
+                        />
                     </div>
 
                     {/* Test Case Results Panel */}
@@ -469,14 +468,13 @@ const TestArena = () => {
                         <div className="px-4 py-2 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
                             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Test Results</span>
                             {currentResults && (
-                                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                                    allPassed ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
-                                }`}>
+                                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${allPassed ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
+                                    }`}>
                                     {currentResults.filter(r => r.passed).length}/{currentResults.length} Passed
                                 </span>
                             )}
                         </div>
-                        
+
                         <div className="flex-1 overflow-auto p-4">
                             {!currentResults ? (
                                 <div className="h-full flex items-center justify-center text-slate-600 text-sm italic">
@@ -485,11 +483,10 @@ const TestArena = () => {
                             ) : (
                                 <div className="space-y-2">
                                     {currentResults.map((tc, i) => (
-                                        <div key={i} className={`p-3 rounded-lg border text-sm font-mono ${
-                                            tc.passed 
-                                                ? 'bg-emerald-500/5 border-emerald-500/20' 
-                                                : 'bg-red-500/5 border-red-500/20'
-                                        }`}>
+                                        <div key={i} className={`p-3 rounded-lg border text-sm font-mono ${tc.passed
+                                            ? 'bg-emerald-500/5 border-emerald-500/20'
+                                            : 'bg-red-500/5 border-red-500/20'
+                                            }`}>
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="font-bold text-xs uppercase tracking-wider text-slate-400">
                                                     Test Case {i + 1} {tc.isHidden ? '(Hidden)' : ''}
@@ -527,8 +524,8 @@ const TestArena = () => {
                                     <div className="pt-4 flex justify-center">
                                         {allPassed ? (
                                             isLastQuestion ? (
-                                                <Button 
-                                                    onClick={() => handleFinalSubmit(false)} 
+                                                <Button
+                                                    onClick={() => handleFinalSubmit(false)}
                                                     className="bg-emerald-600 hover:bg-emerald-500 gap-2 px-6 shadow-lg shadow-emerald-600/20"
                                                     disabled={isSubmitting}
                                                 >
@@ -536,8 +533,8 @@ const TestArena = () => {
                                                     All Passed! Submit Test 🎉
                                                 </Button>
                                             ) : (
-                                                <Button 
-                                                    onClick={goToNextQuestion} 
+                                                <Button
+                                                    onClick={goToNextQuestion}
                                                     className="bg-emerald-600 hover:bg-emerald-500 gap-2 px-6 shadow-lg shadow-emerald-600/20"
                                                 >
                                                     <CheckCircle className="h-4 w-4" />
@@ -554,10 +551,10 @@ const TestArena = () => {
                                                             Skip → Next Question
                                                         </Button>
                                                     )}
-                                                    <Button 
-                                                        variant="outline" 
-                                                        size="sm" 
-                                                        onClick={() => handleFinalSubmit(false)} 
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleFinalSubmit(false)}
                                                         className="border-red-800 text-red-400 hover:bg-red-500/10"
                                                         disabled={isSubmitting}
                                                     >
@@ -573,11 +570,11 @@ const TestArena = () => {
                     </div>
                 </div>
             </div>
-            
+
             {/* Footer: Question Navigation */}
             <div className="h-12 border-t border-slate-800 bg-slate-900 px-6 flex items-center justify-between shrink-0">
-                <Button 
-                    variant="ghost" 
+                <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => { setCurrentQuestionIndex(prev => Math.max(0, prev - 1)); setAllPassed(false); }}
                     disabled={currentQuestionIndex === 0}
@@ -585,22 +582,22 @@ const TestArena = () => {
                 >
                     <ChevronLeft className="h-4 w-4 mr-1" /> Prev
                 </Button>
-                
+
                 <div className="flex gap-2">
                     {test.questions.map((q, i) => {
                         const isSolved = questionScores[q._id] > 0;
                         const hasResults = !!testCaseResults[q._id];
                         return (
-                            <button 
-                                key={i} 
+                            <button
+                                key={i}
                                 onClick={() => { setCurrentQuestionIndex(i); setAllPassed(false); }}
                                 className={`
                                     h-8 w-8 rounded-lg text-xs font-bold transition-all
-                                    ${i === currentQuestionIndex 
-                                        ? 'bg-indigo-600 text-white ring-2 ring-indigo-400 ring-offset-2 ring-offset-slate-900' 
-                                        : isSolved 
-                                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                                            : hasResults 
+                                    ${i === currentQuestionIndex
+                                        ? 'bg-indigo-600 text-white ring-2 ring-indigo-400 ring-offset-2 ring-offset-slate-900'
+                                        : isSolved
+                                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                            : hasResults
                                                 ? 'bg-red-500/20 text-red-400 border border-red-500/30'
                                                 : 'bg-slate-800 text-slate-500 hover:text-slate-300 border border-slate-700'}
                                 `}
@@ -611,7 +608,7 @@ const TestArena = () => {
                     })}
                 </div>
 
-                <Button 
+                <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => { setCurrentQuestionIndex(prev => Math.min(test.questions.length - 1, prev + 1)); setAllPassed(false); }}
