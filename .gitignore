@@ -1,4 +1,17 @@
-backend/.env
-frontend/.env
+# Dependencies and build output
+node_modules/
+dist/
+build/
+
+# Environment files (keep the example)
+.env
+.env.*
 *.env
-node_modules
+!.env.example
+
+# Uploaded user files (resumes etc.)
+backend/uploads/
+
+# Misc
+*.exe
+*.log
