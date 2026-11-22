@@ -5,7 +5,6 @@ exports.protect = async (req, res, next) => {
   let token;
   
   console.log("🛡️ [Auth Middleware] Request Hit:", req.originalUrl);
-  console.log("🛡️ [Auth Middleware] Header:", req.headers.authorization);
 
   if (
     req.headers.authorization &&

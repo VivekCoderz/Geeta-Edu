@@ -1,6 +1,11 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
+// Roles a user may pick when signing up. 'admin' is only granted by scripts/makeAdmin.js
+// or by an existing admin; before this, anyone could POST role: 'admin' to /register.
+const SIGNUP_ROLES = ['student', 'trainer'];
+const signupRole = (role) => (SIGNUP_ROLES.includes(role) ? role : 'student');
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
@@ -17,7 +22,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ success: false, message: 'User already exists' });
     }
 
-    const user = await User.create({ name, email, password, role: role || 'student' });
+    const user = await User.create({ name, email, password, role: signupRole(role) });
 
     res.status(201).json({
       success: true,
@@ -151,7 +156,10 @@ exports.googleLogin = async (req, res) => {
             audience: process.env.GOOGLE_CLIENT_ID
         });
         
-        const { name, email, picture, sub: googleId } = ticket.getPayload();
+        const { name, email, picture, sub: googleId, email_verified } = ticket.getPayload();
+        if (!email_verified) {
+            return res.status(401).json({ success: false, message: 'Google account email is not verified' });
+        }
 
         let user = await User.findOne({ email });
 
@@ -172,7 +180,7 @@ exports.googleLogin = async (req, res) => {
                 email,
                 googleId,
                 profileImage: picture,
-                role: role || 'student', 
+                role: signupRole(role), 
                 password: randomPassword 
             });
         }

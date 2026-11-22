@@ -32,6 +32,9 @@ exports.createOrder = async (req, res) => {
     if (!batch) {
         return res.status(404).json({ success: false, message: 'Batch not found' });
     }
+    if (batch.course?.toString() !== course._id.toString()) {
+        return res.status(400).json({ success: false, message: 'This batch does not belong to the selected course' });
+    }
 
     // Use batch price if set, otherwise fall back to course price
     const amount = batch.batchPrice > 0 ? batch.batchPrice : course.price;
@@ -47,6 +50,17 @@ exports.createOrder = async (req, res) => {
     if (!order) {
       return res.status(500).json({ success: false, message: 'Some error occured' });
     }
+
+    // Remember who this order is for and what it buys, so verify-payment can use
+    // these server-side values instead of trusting courseId/batchId from the client.
+    await Payment.create({
+      razorpay_order_id: order.id,
+      amount,
+      user: req.user.id,
+      course: course._id,
+      batch: batch._id,
+      status: 'created'
+    });
 
     res.json({
       success: true,
@@ -67,10 +81,12 @@ exports.verifyPayment = async (req, res) => {
     const {
       razorpay_order_id,
       razorpay_payment_id,
-      razorpay_signature,
-      courseId,
-      batchId
+      razorpay_signature
     } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ success: false, message: 'Missing payment details' });
+    }
 
     const body = razorpay_order_id + '|' + razorpay_payment_id;
 
@@ -79,29 +95,33 @@ exports.verifyPayment = async (req, res) => {
       .update(body.toString())
       .digest('hex');
 
-    const isAuthentic = expectedSignature === razorpay_signature;
+    const received = Buffer.from(String(razorpay_signature));
+    const expected = Buffer.from(expectedSignature);
+    const isAuthentic = received.length === expected.length && crypto.timingSafeEqual(received, expected);
 
     if (isAuthentic) {
-      // Payment Successful
-      const course = await Course.findById(courseId);
-      const batch = await Batch.findById(batchId);
-      
+      // Payment Successful. The course, batch and amount come from the order this user
+      // created (see createOrder), never from the request body; otherwise a user could pay
+      // for a cheap batch and send the id of an expensive one here.
+      const payment = await Payment.findOne({ razorpay_order_id, user: req.user.id });
+      if (!payment || !payment.batch) {
+        return res.status(400).json({ success: false, message: 'Order not found for this account' });
+      }
+
+      const batch = await Batch.findById(payment.batch);
       if (!batch) {
         return res.status(404).json({ success: false, message: 'Selected batch not found' });
       }
+      const courseId = payment.course;
+      const amount = payment.amount;
 
-      const amount = batch.batchPrice > 0 ? batch.batchPrice : (course?.price || 0);
-
-      // 1. Save Payment to DB
-      await Payment.create({
-        razorpay_order_id,
-        razorpay_payment_id,
-        razorpay_signature,
-        amount: amount,
-        user: req.user.id,
-        course: courseId,
-        status: 'success'
-      });
+      // 1. Mark the payment as successful
+      if (payment.status !== 'success') {
+        payment.razorpay_payment_id = razorpay_payment_id;
+        payment.razorpay_signature = razorpay_signature;
+        payment.status = 'success';
+        await payment.save();
+      }
 
       // 2. Enroll User in selected Batch
       const existingEnrollment = await BatchEnrollment.findOne({ student: req.user.id, batch: batch._id });

@@ -18,15 +18,9 @@ import {
   GraduationCap,
   FileText,
   FolderOpen,
-<<<<<<< HEAD
-  Trophy,
-  Globe
-=======
   Trophy
->>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useLanguage, LANGUAGES } from '../../context/LanguageContext';
 
 const SidebarItem = ({ icon: Icon, label, href, active }) => (
   <Link
@@ -46,11 +40,7 @@ const MainLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-<<<<<<< HEAD
-  const { currentLang, changeLang, languages } = useLanguage();
-=======
   const { t } = useTranslation();
->>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
 
   const handleLogout = () => {
     logout();
@@ -58,19 +48,6 @@ const MainLayout = () => {
   };
 
   const navItems = [
-<<<<<<< HEAD
-    { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
-    { icon: BookOpen, label: 'Courses', href: '/courses' },
-    { icon: Users, label: 'Batches', href: '/batches' },
-    { icon: Video, label: 'Live Classes', href: '/live-classes' },
-    { icon: FileText, label: 'Assignments', href: '/assignments' },
-    { icon: FolderOpen, label: 'Materials', href: '/materials' },
-    { icon: MessageSquare, label: 'Community', href: '/community' },
-    { icon: Bell, label: 'Announcements', href: '/announcements' },
-    { icon: Bot,           label: 'Interview Coach', href: '/interview' },
-    { icon: GraduationCap, label: 'AI Tutor',        href: '/ai-tutor' },
-    { icon: Trophy,        label: 'Leaderboard',     href: '/leaderboard' },
-=======
     { icon: LayoutDashboard, label: t('nav.dashboard'), href: '/' },
     { icon: BookOpen, label: t('nav.courses'), href: '/courses' },
     { icon: Users, label: t('nav.batches'), href: '/batches' },
@@ -82,7 +59,6 @@ const MainLayout = () => {
     { icon: Bell, label: t('nav.announcements'), href: '/announcements' },
     { icon: Bot,           label: t('nav.interview_coach'), href: '/interview' },
     { icon: GraduationCap, label: t('nav.ai_tutor'),        href: '/ai-tutor' },
->>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
   ];
 
   if (user?.role === 'admin') {
@@ -114,38 +90,6 @@ const MainLayout = () => {
               ))}
             </nav>
           </div>
-<<<<<<< HEAD
-          <div className="mt-auto p-4">
-             {/* Language Selector */}
-             <div className="mb-3">
-               <div className="flex items-center gap-2 px-2 mb-1.5">
-                 <Globe className="h-3.5 w-3.5 text-slate-400" />
-                 <span className="text-xs text-slate-400 font-medium">Language</span>
-               </div>
-               <div className="flex gap-1 px-1">
-                 {languages.map(lang => (
-                   <button
-                     key={lang.code}
-                     onClick={() => changeLang(lang.code)}
-                     className={cn(
-                       "flex-1 px-1.5 py-1.5 rounded-lg text-xs font-medium transition-all text-center",
-                       currentLang === lang.code
-                         ? "bg-primary/20 text-primary border border-primary/30"
-                         : "text-muted-foreground hover:bg-muted/50 border border-transparent"
-                     )}
-                     title={lang.label}
-                   >
-                     {lang.flag}
-                   </button>
-                 ))}
-               </div>
-             </div>
-             <Link to="/profile" className="flex items-center gap-4 px-2 py-4 border-t hover:bg-muted/50 transition-colors cursor-pointer rounded-lg">
-                <div className="flex flex-col">
-                    <span className="text-sm font-medium">{user?.name}</span>
-                    <span className="text-xs text-muted-foreground capitalize">{user?.role}</span>
-                </div>
-=======
           <div className="mt-auto p-4 border-t space-y-3">
              <div className="flex items-center gap-2">
                <span className="text-xs font-semibold text-muted-foreground w-12">Lang:</span>
@@ -170,7 +114,6 @@ const MainLayout = () => {
              <Link to="/profile" className="flex flex-col px-2 py-2 hover:bg-muted/50 transition-colors cursor-pointer rounded-lg bg-background border">
                 <span className="text-sm font-medium text-primary line-clamp-1">{user?.name}</span>
                 <span className="text-[10px] text-muted-foreground capitalize">{user?.role}</span>
->>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
              </Link>
              <Button variant="outline" size="sm" className="w-full justify-start gap-2" onClick={handleLogout}>
                <LogOut className="h-4 w-4" />

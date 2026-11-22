@@ -79,6 +79,7 @@ exports.submitAssignment = async (req, res) => {
         assignment: assignmentId,
         student: studentId
     });
+    const isFirstSubmission = !submission;
 
     if (submission) {
         // Update existing
@@ -104,8 +105,10 @@ exports.submitAssignment = async (req, res) => {
         message: 'Assignment submitted successfully' 
     });
 
-    // Award gamification points for submission (only for new, not resubmit)
-    if (!req.body._isResubmit) {
+    // Award gamification points for submission (only for new, not resubmit).
+    // Decided on the server: the old `req.body._isResubmit` flag came from the client,
+    // so re-submitting the same assignment earned points again every time.
+    if (isFirstSubmission) {
       awardPoints(req.user.id, 'assignment_submit', 30, `Assignment: ${assignment.title}`, assignment._id, 'Assignment');
     }
   } catch (error) {

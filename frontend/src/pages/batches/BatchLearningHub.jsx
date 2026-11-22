@@ -150,17 +150,8 @@ const BatchLearningHub = () => {
               fileUrl 
           });
 
-          // Award Gamification Points (e.g., 50 points per assignment)
-          try {
-              const pointsRes = await api.post('/gamification/award', { pointsToAdd: 50, reason: 'Completed Assignment' });
-              if (pointsRes.data?.data?.newBadges?.length > 0) {
-                  alert(`Assignment Submitted! 🎉 You earned 50 points and a new badge: ${pointsRes.data.data.newBadges[0].name}`);
-              } else {
-                  alert("Assignment Submitted! 🎉 You earned 50 points!");
-              }
-          } catch (e) {
-              alert("Assignment Submitted Successfully!");
-          }
+          // Points are awarded by the server when the assignment is submitted.
+          alert("Assignment Submitted! 🎉 You earned 30 points!");
 
           setSelectedAssignment(null);
           setSubmissionLink('');
