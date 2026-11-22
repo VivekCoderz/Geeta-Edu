@@ -7,11 +7,14 @@ exports.getMessages = async (req, res) => {
   try {
     const { room } = req.params;
     
-    // Fetch last 50 messages, sorted by time
-    const messages = await Message.find({ room })
-      .sort({ createdAt: 1 }) // Oldest first
+    // Fetch the latest 50 messages, then put them back in time order (oldest first).
+    // Sorting ascending before limit() returned the *first* 50 messages ever, so once a
+    // room had more than 50, new messages never showed up after a reload.
+    const messages = (await Message.find({ room })
+      .sort({ createdAt: -1 })
       .limit(50)
-      .populate('sender', 'name profileImage'); // Populate sender details
+      .populate('sender', 'name profileImage')) // Populate sender details
+      .reverse();
 
     res.status(200).json({
       success: true,
