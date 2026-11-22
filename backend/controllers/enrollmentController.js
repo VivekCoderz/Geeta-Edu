@@ -20,9 +20,18 @@ exports.enrollCourse = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Already enrolled' });
     }
 
+    // This route is only for free courses. Paid courses must go through
+    // /api/payment (Razorpay) so the payment is verified on the server.
+    if (course.price > 0) {
+      return res.status(403).json({ success: false, message: 'Please complete payment to enroll.' });
+    }
+
     // For manual free enrollment, we need a batch
     const Batch = require('../models/Batch');
     let batch = await Batch.findOne({ course: req.params.courseId }).sort('-createdAt');
+    if (batch && batch.batchPrice > 0) {
+      return res.status(403).json({ success: false, message: 'Please complete payment to enroll.' });
+    }
     if (!batch) {
         batch = await Batch.create({
             title: `${course.title} - Self Paced`,
