@@ -14,7 +14,6 @@ import BatchLearningHub from './pages/batches/BatchLearningHub';
 import AssignmentList from './pages/assignments/AssignmentList';
 import LiveSchedule from './pages/live-classes/LiveSchedule';
 import Community from './pages/community/Community';
-import Leaderboard from './pages/community/Leaderboard';
 import TestArena from './pages/tests/TestArena';
 import Profile from './pages/profile/Profile';
 import TrainerProfile from './pages/profile/TrainerProfile';
@@ -77,7 +76,6 @@ function App() {
               <Route path="profile" element={<Profile />} />
               <Route path="trainer/:id" element={<TrainerProfile />} />
               <Route path="admin" element={<AdminDashboard />} />
-              <Route path="leaderboard" element={<Leaderboard />} />
             </Route>
             <Route path="tests/:id/start" element={
                <ProtectedRoute>

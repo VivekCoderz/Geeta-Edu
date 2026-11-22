@@ -119,7 +119,6 @@ exports.tutorGenerateQuiz = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
 // ─────────────────────────────────────────────────────────────
 // TRANSLATION ENDPOINT
 // ─────────────────────────────────────────────────────────────
@@ -137,26 +136,10 @@ exports.translateContent = async (req, res) => {
     res.json({ success: true, data: { translated, targetLang } });
   } catch (error) {
     console.error('Translation Error:', error);
-=======
-// @desc    Translate text
-// @route   POST /api/ai/tutor/translate
-// @access  Private
-exports.tutorTranslate = async (req, res) => {
-  try {
-    const { text, targetLanguage } = req.body;
-    if (!text || !targetLanguage) {
-      return res.status(400).json({ success: false, message: 'text and targetLanguage are required.' });
-    }
-    const translatedText = await aiService.translateText(text, targetLanguage);
-    res.json({ success: true, data: { translatedText } });
-  } catch (error) {
-    console.error('Tutor Translate Error:', error);
->>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-<<<<<<< HEAD
 // ─────────────────────────────────────────────────────────────
 // LECTURE SUMMARY ENDPOINT
 // ─────────────────────────────────────────────────────────────
@@ -174,7 +157,27 @@ exports.summarizeContent = async (req, res) => {
     res.json({ success: true, data });
   } catch (error) {
     console.error('Summary Error:', error);
-=======
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Translate text
+// @route   POST /api/ai/tutor/translate
+// @access  Private
+exports.tutorTranslate = async (req, res) => {
+  try {
+    const { text, targetLanguage } = req.body;
+    if (!text || !targetLanguage) {
+      return res.status(400).json({ success: false, message: 'text and targetLanguage are required.' });
+    }
+    const translatedText = await aiService.translateText(text, targetLanguage);
+    res.json({ success: true, data: { translatedText } });
+  } catch (error) {
+    console.error('Tutor Translate Error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // @desc    Summarize lecture
 // @route   POST /api/ai/tutor/summarize
 // @access  Private
@@ -188,7 +191,6 @@ exports.tutorSummarize = async (req, res) => {
     res.json({ success: true, data });
   } catch (error) {
     console.error('Tutor Summarize Error:', error);
->>>>>>> f71efa3a210e045657c37b6faeabc30f96cb0598
     res.status(500).json({ success: false, message: error.message });
   }
 };
