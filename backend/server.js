@@ -15,7 +15,9 @@ app.use('/uploads', express.static('uploads'));
 app.use((req, res, next) => {
   console.log(`📡 [${req.method}] ${req.url}`);
   if (req.method === 'POST' || req.method === 'PUT') {
-      console.log("📦 BODY:", JSON.stringify(req.body, null, 2));
+      // Hide passwords, tokens and payment signatures so they never end up in the logs.
+      const hideSecrets = (key, value) => (/pass|token|secret|signature/i.test(key) ? '[hidden]' : value);
+      console.log("📦 BODY:", JSON.stringify(req.body, hideSecrets, 2));
   }
   // console.log("Headers:", JSON.stringify(req.headers, null, 2));
   next();
